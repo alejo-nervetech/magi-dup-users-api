@@ -1,43 +1,64 @@
 'use strict';
 
 class UserMapper {
-    constructor(params) {
-        this._id = params._id;
-        this.email = params.email;
+    constructor(params, total = null) {
+        if (Array.isArray(params)) {
+            return {
+                data: params.map(
+                    (user) => new UserMapper(user.dataValues || user)
+                ),
+                total: total || params.length,
+            };
+        }
+
+        this.id = params.id;
         this.name = params.name;
+        this.email = params.email;
+        this.userType = params.userType;
+        this.roleId = params.roleId;
         this.organizationId = params.organizationId;
-        this.password = params.password;
-        this.deletedAt = params.deletedAt || null;
+        this.isActive = params.isActive;
         this.createdAt = params.createdAt;
         this.updatedAt = params.updatedAt;
 
-        this.__v = params.__v;
+        if (params.userType === 'doctor') {
+            this.specialization = params.specialization || null;
+            this.subspecialization = params.subspecialization || null;
+        }
+
+        if (params.role) {
+            this.role = {
+                id: params.role.id,
+                name: params.role.name,
+            };
+        }
 
         return this.object();
     }
 
-    isDeleted() {
-        return !!this.deletedAt;
-    }
-
     object() {
-        return {
-            _id: this._id,
-            email: this.email,
+        const mapped = {
+            id: this.id,
             name: this.name,
+            email: this.email,
+            userType: this.userType,
+            roleId: this.roleId,
             organizationId: this.organizationId,
-            password: this.password,
-            isDeleted: this.isDeleted(),
-            deletedAt: this.deletedAt,
+            isActive: this.isActive,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
         };
-    }
 
-    metadata() {
-        return {
-            __v: this.__v,
-        };
+        if (this.userType === 'doctor') {
+            mapped.specialization = this.specialization;
+            mapped.subspecialization = this.subspecialization;
+        }
+
+        if (this.role) {
+            mapped.role = this.role;
+        }
+
+        return mapped;
     }
 }
 

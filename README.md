@@ -1,9 +1,9 @@
-# Base ExpressJS
+# MAGI Users API
 
 ![image](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 ![image](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white)
 
-Base ExpressJS is a template repository for Nerve Tech PH. As new technologies become available, this repository must be updated in order to ensure that all applications built by the organization are using the latest version.
+Users API for MAGI Healthcare Facility Management System.
 
 ## Versioning
 
@@ -21,7 +21,7 @@ $ git push origin <version_number>
 
 ## Branching
 
--   The `main` branch will serve as the development branch of the application
+-   The `development` branch will serve as the development branch of the application
 -   CI/CD for staging must be pointed towards the `staging` branch
 -   Before updating the source artifact for production deployment, rebase the `staging` branch to `production`
     -   After `staging` is rebased to `production`, create another branch based on `production` named `v<version_number>_<YYYY-MM-DD>`
@@ -32,18 +32,18 @@ $ git push origin <version_number>
 
 ## Environment Variables
 
-| Environment Variable          | Type   | Description                                                  |
-| ----------------------------- | ------ | ------------------------------------------------------------ | ------- | ----------- |
+| Environment Variable          | Type   | Description                                                 |
+| ----------------------------- | ------ | ----------------------------------------------------------- | ------- | ----------- |
 | **Application Configuration** |        |
-| PORT                          | string | The port where the application should run. Defaults to 30000 |
-| NODE_ENV                      | string | Environment type [development                                | staging | production] |
+| PORT                          | string | The port where the application should run. Defaults to 3000 |
+| NODE_ENV                      | string | Environment type [development                               | staging | production] |
 | **CORS**                      |        |
-| CORS_ORIGIN                   | string | CORS origin                                                  |
+| CORS_ORIGIN                   | string | CORS origin                                                 |
 | **Database**                  |        |
-| DB_NAME                       | string | The name of the database                                     |
-| DB_HOST                       | string | Host of the database (e.g. http://localhost)                 |
-| DB_PORT                       | number | Port number of the database. Defaults to 3306                |
-| DB_USER                       | string | Database username                                            |
-| DB_PASSWORD                   | string | Database password                                            |
+| DB_NAME                       | string | The name of the database                                    |
+| DB_HOST                       | string | Host of the database (e.g. http://localhost)                |
+| DB_PORT                       | number | Port number of the database. Defaults to 5432               |
+| DB_USER                       | string | Database username                                           |
+| DB_PASSWORD                   | string | Database password                                           |
 | **Encryption and Security**   |        |
-| JWT_TOKEN                     | string | JSON Web Token security key                                  |
+| JWT_TOKEN                     | string | JSON Web Token security key                                 |

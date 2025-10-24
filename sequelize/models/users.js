@@ -49,6 +49,19 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            userType: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                defaultValue: 'employee',
+            },
+            specialization: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            subspecialization: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             isActive: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: true,
