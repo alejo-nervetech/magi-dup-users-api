@@ -60,7 +60,10 @@ class RolesRoute extends BaseRoute {
 
     async listRoles(req, res, next) {
         try {
-            const result = await roleControllers.ListRoles.execute(req);
+            const result = await roleControllers.ListRoles.execute(
+                req.query,
+                req.user
+            );
             res.send(new RoleMapper(result.roles, result.total));
         } catch (error) {
             next(error);

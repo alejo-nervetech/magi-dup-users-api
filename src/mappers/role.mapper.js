@@ -6,7 +6,7 @@ class RoleMapper {
     constructor(data, total = null) {
         if (Array.isArray(data)) {
             return {
-                roles: data.map((role) => this.mapRole(role)),
+                data: data.map((role) => this.mapRole(role)),
                 total: total || data.length,
             };
         }

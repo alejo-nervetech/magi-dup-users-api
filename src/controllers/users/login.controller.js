@@ -7,7 +7,7 @@ const { comparePassword } = require('../../utils/bcrypt-utils');
 const { generateToken } = require('../../utils/jwt-utils');
 
 class LoginController extends BaseController {
-    static async perform(email, password) {
+    static async execute(email, password) {
         try {
             const user = await Users.findOne({
                 where: {

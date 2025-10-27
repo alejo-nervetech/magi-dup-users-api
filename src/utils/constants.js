@@ -12,6 +12,7 @@ const RESOURCES = {
     PATIENT_INFORMATION: 'patient_information',
     DOCTOR_ORDERS: 'doctor_orders',
     DIAGNOSIS_PROGNOSIS: 'diagnosis_prognosis',
+    SYSTEM_USER: 'system_user',
 };
 
 const ACCESS_TYPES = {

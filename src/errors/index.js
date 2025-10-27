@@ -3,6 +3,7 @@
 const AuthenticationFailureError = require('./authentication-failure.error');
 const BadRequestError = require('./bad-request.error');
 const FileUploadError = require('./file-upload.error');
+const ForbiddenError = require('./forbidden.error');
 const InternalServerError = require('./internal-server.error');
 const NotImplementedError = require('./not-implemented.error');
 const ResourceAlreadyExistsError = require('./resource-already-exists.error');
@@ -13,6 +14,7 @@ module.exports = {
     AuthenticationFailureError,
     BadRequestError,
     FileUploadError,
+    ForbiddenError,
     InternalServerError,
     NotImplementedError,
     ResourceNotFoundError,

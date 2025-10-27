@@ -1,38 +1,34 @@
 'use strict';
 
 class OrganizationMapper {
-    constructor(params) {
-        this._id = params._id;
-        this.email = params.email;
+    constructor(params, total = null) {
+        if (Array.isArray(params)) {
+            return {
+                data: params.map(
+                    (org) => new OrganizationMapper(org.dataValues || org)
+                ),
+                total: total || params.length,
+            };
+        }
+
+        this.id = params.id;
         this.name = params.name;
+        this.isActive = params.isActive;
         this.deletedAt = params.deletedAt || null;
         this.createdAt = params.createdAt;
         this.updatedAt = params.updatedAt;
 
-        this.__v = params.__v;
-
         return this.object();
-    }
-
-    isDeleted() {
-        return !!this.deletedAt;
     }
 
     object() {
         return {
-            _id: this._id,
-            email: this.email,
+            id: this.id,
             name: this.name,
-            isDeleted: this.isDeleted(),
+            isActive: this.isActive,
             deletedAt: this.deletedAt,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
-        };
-    }
-
-    metadata() {
-        return {
-            __v: this.__v,
         };
     }
 }

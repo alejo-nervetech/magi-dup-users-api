@@ -1,10 +1,10 @@
 'use strict';
 
-const { Roles, Permissions } = require('../../../sequelize/models');
+const { Users, Roles } = require('../../../sequelize/models');
 const { Op } = require('sequelize');
 const BaseController = require('../base-controller');
 
-class ListRoles extends BaseController {
+class ListUsersController extends BaseController {
     static async execute(params = {}, user) {
         try {
             const { sortBy, sortColumn, pageSize, offsetValue, search } =
@@ -17,19 +17,33 @@ class ListRoles extends BaseController {
                 },
                 include: [
                     {
-                        model: Permissions,
-                        as: 'permissions',
-                        attributes: ['id', 'resource', 'accessType'],
+                        model: Roles,
+                        as: 'role',
+                        attributes: ['id', 'name'],
                     },
+                ],
+                attributes: [
+                    'id',
+                    'name',
+                    'email',
+                    'userType',
+                    'specialization',
+                    'subspecialization',
+                    'roleId',
+                    'organizationId',
+                    'isActive',
+                    'createdAt',
+                    'updatedAt',
                 ],
                 order: [
                     [
                         [
                             'id',
                             'name',
-                            'organizationId',
-                            'isDefault',
-                            'canBeDeleted',
+                            'email',
+                            'userType',
+                            'roleId',
+                            'isActive',
                             'createdAt',
                             'updatedAt',
                         ].includes(sortColumn)
@@ -43,7 +57,10 @@ class ListRoles extends BaseController {
             };
 
             if (search) {
-                query.where[Op.or] = [{ name: { [Op.like]: `%${search}%` } }];
+                query.where[Op.or] = [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { email: { [Op.like]: `%${search}%` } },
+                ];
             }
 
             if (pageSize !== undefined || offsetValue !== undefined) {
@@ -51,16 +68,16 @@ class ListRoles extends BaseController {
                 query.offset = Math.max(0, parseInt(offsetValue) || 0);
             }
 
-            const [roles, total] = await Promise.all([
-                Roles.findAll(query),
-                Roles.count({ where: query.where }),
+            const [users, total] = await Promise.all([
+                Users.findAll(query),
+                Users.count({ where: query.where }),
             ]);
 
-            return { roles, total };
+            return { users, total };
         } catch (error) {
             throw error;
         }
     }
 }
 
-module.exports = ListRoles;
+module.exports = ListUsersController;
