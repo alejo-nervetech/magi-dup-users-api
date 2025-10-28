@@ -6,9 +6,9 @@ const BaseController = require('../base-controller');
 const { v6 } = require('uuid');
 
 class AddPermission extends BaseController {
-    static async execute(permissionData, req) {
+    static async execute(permissionData, requestUser) {
         try {
-            const organizationId = req.user.organizationId;
+            const organizationId = requestUser.organizationId;
             const { roleId, resource, accessType } = permissionData;
 
             const role = await Roles.findOne({

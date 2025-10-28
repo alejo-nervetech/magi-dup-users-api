@@ -1,7 +1,14 @@
 'use strict';
 
-const BaseValidator = require('./base');
 const Errors = require('./../errors');
+const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
+const addErrors = require('ajv-errors');
+const BaseValidator = require('./base');
+const ajv = new Ajv({ allErrors: true });
+
+addFormats(ajv);
+addErrors(ajv);
 
 const VALID_SCHEMA = ['login', 'create', 'update'];
 
@@ -13,13 +20,32 @@ class UserValidator extends BaseValidator {
             );
         }
 
-        const _schema = require(`./schemas/users/${schema}.schema`);
+        const validationSchema = require(`./schemas/users/${schema}.schema`);
 
-        const validator = new UserValidator();
-        const valid = validator._validate(_schema, data);
+        const missingFields = [];
+        const requiredFields = validationSchema.required || [];
+        requiredFields.forEach((field) => {
+            if (!(field in data)) {
+                missingFields.push(field);
+            }
+        });
+
+        if (missingFields.length > 0) {
+            const errorMessages = validationSchema.errorMessage?.required || {};
+            const missingFieldMessages = missingFields.map((field) => {
+                return errorMessages[field] || `${field} is required`;
+            });
+            throw new Errors.BadRequestError(
+                `missing_parameters - ${missingFieldMessages.join(', ')}`
+            );
+        }
+
+        const valid = ajv.validate(validationSchema, data);
 
         if (!valid) {
-            throw new Errors.BadRequestError(validator.errors[0].message);
+            throw new Errors.BadRequestError(
+                `malformed_payload - ${ajv.errors[0].message}`
+            );
         }
 
         return true;

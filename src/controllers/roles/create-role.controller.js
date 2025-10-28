@@ -6,9 +6,9 @@ const BaseController = require('../base-controller');
 const { v6 } = require('uuid');
 
 class CreateRole extends BaseController {
-    static async execute(roleData, req) {
+    static async execute(roleData, requestUser) {
         try {
-            const organizationId = req.user.organizationId;
+            const organizationId = requestUser.organizationId;
 
             const organizationExists =
                 await Organizations.findByPk(organizationId);

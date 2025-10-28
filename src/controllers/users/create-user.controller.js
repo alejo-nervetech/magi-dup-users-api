@@ -48,24 +48,7 @@ class CreateUserController extends BaseController {
                 isActive: true,
             });
 
-            const userResponse = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                userType: user.userType,
-                roleId: user.roleId,
-                organizationId: user.organizationId,
-                isActive: user.isActive,
-                createdAt: user.createdAt,
-                updatedAt: user.updatedAt,
-            };
-
-            if (user.userType === 'doctor') {
-                userResponse.specialization = user.specialization;
-                userResponse.subspecialization = user.subspecialization;
-            }
-
-            return userResponse;
+            return user;
         } catch (error) {
             throw error;
         }

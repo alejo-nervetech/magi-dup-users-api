@@ -37,4 +37,12 @@ module.exports = {
     },
     required: ['name', 'email', 'password', 'roleId'],
     additionalProperties: false,
+    errorMessage: {
+        required: {
+            name: 'Name is required',
+            email: 'Email is required',
+            password: 'Password is required',
+            roleId: 'Role ID is required',
+        },
+    },
 };

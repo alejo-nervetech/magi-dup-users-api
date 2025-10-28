@@ -18,4 +18,11 @@ module.exports = {
     },
     required: ['roleId', 'resource', 'accessType'],
     additionalProperties: false,
+    errorMessage: {
+        required: {
+            roleId: 'Role ID is required',
+            resource: 'Resource is required',
+            accessType: 'Access type is required',
+        },
+    },
 };

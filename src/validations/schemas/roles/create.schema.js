@@ -11,4 +11,9 @@ module.exports = {
     },
     required: ['name'],
     additionalProperties: false,
+    errorMessage: {
+        required: {
+            name: 'Role name is required',
+        },
+    },
 };

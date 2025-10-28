@@ -5,9 +5,9 @@ const { Roles } = require('../../../sequelize/models');
 const BaseController = require('../base-controller');
 
 class DeleteRole extends BaseController {
-    static async execute(roleId, req) {
+    static async execute(roleId, requestUser) {
         try {
-            const organizationId = req.user.organizationId;
+            const organizationId = requestUser.organizationId;
 
             const role = await Roles.findOne({
                 where: {
