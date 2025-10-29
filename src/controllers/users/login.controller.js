@@ -2,7 +2,7 @@
 
 const BaseController = require('../base-controller');
 const Errors = require('./../../errors');
-const { Users } = require('../../../sequelize/models');
+const { Users, Roles, Permissions } = require('../../../sequelize/models');
 const { comparePassword } = require('../../utils/bcrypt-utils');
 const { generateToken } = require('../../utils/jwt-utils');
 
@@ -14,6 +14,18 @@ class LoginController extends BaseController {
                     email: email,
                     deletedAt: null,
                 },
+                include: [
+                    {
+                        model: Roles,
+                        as: 'role',
+                        include: [
+                            {
+                                model: Permissions,
+                                as: 'permissions',
+                            },
+                        ],
+                    },
+                ],
             });
 
             if (!user) {
@@ -26,12 +38,19 @@ class LoginController extends BaseController {
                 throw new Errors.AuthenticationFailureError();
             }
 
+            const permissions =
+                user.role?.permissions?.map((p) => ({
+                    resource: p.resource,
+                    accessType: p.accessType,
+                })) || [];
+
             const sessionData = {
                 id: user.id,
                 name: user.name,
                 email: user.email,
                 organizationId: user.organizationId,
                 roleId: user.roleId,
+                permissions: permissions,
             };
 
             return generateToken(sessionData);
