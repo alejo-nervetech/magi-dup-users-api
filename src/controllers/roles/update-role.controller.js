@@ -5,9 +5,9 @@ const { Roles } = require('../../../sequelize/models');
 const BaseController = require('../base-controller');
 
 class UpdateRole extends BaseController {
-    static async execute(roleId, roleData, req) {
+    static async execute(roleId, roleData, requestUser) {
         try {
-            const organizationId = req.user.organizationId;
+            const organizationId = requestUser.organizationId;
 
             const role = await Roles.findOne({
                 where: {

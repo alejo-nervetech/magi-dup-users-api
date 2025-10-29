@@ -50,7 +50,7 @@ class RolesRoute extends BaseRoute {
             RoleValidator.validate('create', req.body);
             const role = await roleControllers.CreateRole.execute(
                 req.body,
-                req
+                req.user
             );
             res.send(new RoleMapper(role.dataValues));
         } catch (error) {
@@ -73,7 +73,7 @@ class RolesRoute extends BaseRoute {
     async getRole(req, res, next) {
         try {
             const { id } = req.params;
-            const role = await roleControllers.GetRole.execute(id, req);
+            const role = await roleControllers.GetRole.execute(id, req.user);
             res.send(new RoleMapper(role.dataValues));
         } catch (error) {
             next(error);
@@ -87,7 +87,7 @@ class RolesRoute extends BaseRoute {
             const role = await roleControllers.UpdateRole.execute(
                 id,
                 req.body,
-                req
+                req.user
             );
             res.send(new RoleMapper(role.dataValues));
         } catch (error) {
@@ -98,7 +98,7 @@ class RolesRoute extends BaseRoute {
     async deleteRole(req, res, next) {
         try {
             const { id } = req.params;
-            const role = await roleControllers.DeleteRole.execute(id, req);
+            const role = await roleControllers.DeleteRole.execute(id, req.user);
             res.send(new RoleMapper(role.dataValues));
         } catch (error) {
             next(error);
@@ -110,7 +110,7 @@ class RolesRoute extends BaseRoute {
             RoleValidator.validate('addPermission', req.body);
             const permission = await roleControllers.AddPermission.execute(
                 req.body,
-                req
+                req.user
             );
             res.send(new PermissionMapper(permission.dataValues));
         } catch (error) {
@@ -123,7 +123,7 @@ class RolesRoute extends BaseRoute {
             const { id } = req.params;
             const permission = await roleControllers.RemovePermission.execute(
                 id,
-                req
+                req.user
             );
             res.send(new PermissionMapper(permission.dataValues));
         } catch (error) {

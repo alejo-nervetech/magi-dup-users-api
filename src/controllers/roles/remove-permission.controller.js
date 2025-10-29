@@ -5,9 +5,9 @@ const { Permissions, Roles } = require('../../../sequelize/models');
 const BaseController = require('../base-controller');
 
 class RemovePermission extends BaseController {
-    static async execute(permissionId, req) {
+    static async execute(permissionId, requestUser) {
         try {
-            const organizationId = req.user.organizationId;
+            const organizationId = requestUser.organizationId;
 
             const permission = await Permissions.findByPk(permissionId, {
                 include: [

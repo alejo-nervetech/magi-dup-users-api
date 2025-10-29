@@ -1,16 +1,12 @@
 'use strict';
 
-const {
-    LoginController,
-    CreateUserController,
-    ListUsersController,
-} = require('../controllers/users');
+const BaseRoute = require('./base-route');
 const LoginResponseMapper = require('./../mappers/response-mappers/login-response-mapper');
 const UserMapper = require('./../mappers/user.mapper');
+const UserValidator = require('./../validations/user.validation');
+const userControllers = require('../controllers/users');
 const authenticate = require('./../middlewares/authenticate');
 const authorize = require('./../middlewares/authorize');
-const BaseRoute = require('./base-route');
-const UserValidator = require('./../validations/user.validation');
 
 class UserRoute extends BaseRoute {
     load() {
@@ -19,17 +15,17 @@ class UserRoute extends BaseRoute {
             '/v1/user',
             authenticate,
             authorize(['system_user'], 'W'),
-            this.create
+            this.createUser
         );
         this.app.get(
             '/v1/users',
             authenticate,
             authorize(['system_user'], 'R'),
-            this.list
+            this.listUsers
         );
     }
 
-    login = async (req, res, next) => {
+    async login(req, res, next) {
         const { email, password } = req.body;
 
         try {
@@ -38,38 +34,41 @@ class UserRoute extends BaseRoute {
                 password,
             });
 
-            const token = await LoginController.execute(email, password);
+            const token = await userControllers.LoginController.execute(
+                email,
+                password
+            );
 
             res.send(new LoginResponseMapper(token));
         } catch (error) {
-            console.log(error);
             next(error);
         }
-    };
+    }
 
-    create = async (req, res, next) => {
+    async createUser(req, res, next) {
         try {
             UserValidator.validate('create', req.body);
-            const user = await CreateUserController.execute(req.body, req.user);
-            res.status(201).send(user);
+            const user = await userControllers.CreateUserController.execute(
+                req.body,
+                req.user
+            );
+            res.send(new UserMapper(user.dataValues));
         } catch (error) {
-            console.log(error);
             next(error);
         }
-    };
+    }
 
-    list = async (req, res, next) => {
+    async listUsers(req, res, next) {
         try {
-            const result = await ListUsersController.execute(
+            const result = await userControllers.ListUsersController.execute(
                 req.query,
                 req.user
             );
             res.send(new UserMapper(result.users, result.total));
         } catch (error) {
-            console.log(error);
             next(error);
         }
-    };
+    }
 }
 
 module.exports = UserRoute;

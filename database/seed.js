@@ -23,6 +23,7 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'doctor_orders', accessType: 'W' },
         { resource: 'diagnosis_prognosis', accessType: 'W' },
         { resource: 'system_user', accessType: 'W' },
+        { resource: 'infrastructure', accessType: 'W' },
     ],
     NURSE: [
         { resource: 'patient_vitals', accessType: 'W' },
