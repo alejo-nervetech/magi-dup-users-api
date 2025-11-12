@@ -6,23 +6,13 @@ const UserMapper = require('./../mappers/user.mapper');
 const UserValidator = require('./../validations/user.validation');
 const userControllers = require('../controllers/users');
 const authenticate = require('./../middlewares/authenticate');
-const authorize = require('./../middlewares/authorize');
+const validateServiceToken = require('./../middlewares/validate-service-token');
 
 class UserRoute extends BaseRoute {
     load() {
-        this.app.post('/v1/user/login', this.login);
-        this.app.post(
-            '/v1/user',
-            authenticate,
-            authorize(['system_user'], 'W'),
-            this.createUser
-        );
-        this.app.get(
-            '/v1/users',
-            authenticate,
-            authorize(['system_user'], 'R'),
-            this.listUsers
-        );
+        this.app.post('/v1/user/login', validateServiceToken, this.login);
+        this.app.post('/v1/user', authenticate, this.createUser);
+        this.app.get('/v1/users', authenticate, this.listUsers);
     }
 
     async login(req, res, next) {

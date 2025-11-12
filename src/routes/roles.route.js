@@ -6,41 +6,19 @@ const PermissionMapper = require('../mappers/permission.mapper');
 const RoleValidator = require('../validations/role.validation');
 const roleControllers = require('../controllers/roles');
 const authenticate = require('../middlewares/authenticate');
-const authorize = require('../middlewares/authorize');
 
 class RolesRoute extends BaseRoute {
     load() {
-        this.app.post(
-            '/v1/role',
-            authenticate,
-            authorize(['role'], 'W'),
-            this.createRole
-        );
+        this.app.post('/v1/role', authenticate, this.createRole);
         this.app.get('/v1/roles', authenticate, this.listRoles);
         this.app.get('/v1/role/:id', authenticate, this.getRole);
-        this.app.put(
-            '/v1/role/:id',
-            authenticate,
-            authorize(['role'], 'W'),
-            this.updateRole
-        );
-        this.app.delete(
-            '/v1/role/:id',
-            authenticate,
-            authorize(['role'], 'W'),
-            this.deleteRole
-        );
+        this.app.put('/v1/role/:id', authenticate, this.updateRole);
+        this.app.delete('/v1/role/:id', authenticate, this.deleteRole);
 
-        this.app.post(
-            '/v1/permission',
-            authenticate,
-            authorize(['role'], 'W'),
-            this.addPermission
-        );
+        this.app.post('/v1/permission', authenticate, this.addPermission);
         this.app.delete(
             '/v1/permission/:id',
             authenticate,
-            authorize(['role'], 'W'),
             this.removePermission
         );
     }
