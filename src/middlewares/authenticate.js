@@ -1,75 +1,52 @@
 'use strict';
 
-const {
-    Users,
-    Organizations,
-    Roles,
-    Permissions,
-} = require('../../sequelize/models');
 const config = require('./../../config');
 const { AuthenticationFailureError } = require('./../errors');
-
-const jwt = require('jsonwebtoken');
-
-async function retrieveTokenOwner(authorization) {
-    const decodedAuthorization = jwt.verify(
-        authorization,
-        config.encryption.jwt.jwtToken
-    );
-
-    return await findUser(decodedAuthorization.id);
-}
-
-async function findUser(userId) {
-    try {
-        const user = await Users.findByPk(userId, {
-            include: [
-                {
-                    model: Organizations,
-                    as: 'organization',
-                },
-                {
-                    model: Roles,
-                    as: 'role',
-                    include: [
-                        {
-                            model: Permissions,
-                            as: 'permissions',
-                        },
-                    ],
-                },
-            ],
-        });
-
-        if (!user || user.deletedAt) {
-            return null;
-        }
-
-        return user;
-    } catch (_error) {
-        return null;
-    }
-}
 
 module.exports = async (req, res, next) => {
     const error = new AuthenticationFailureError();
 
     try {
-        const authorization = req.headers.authorization.split(' ')[1];
+        const serviceToken = req.headers['x-service-token'];
 
-        const user = await retrieveTokenOwner(authorization);
-
-        if (user) {
-            req.user = user.dataValues;
-            req.cookies.user = user.dataValues;
-
-            next();
-        } else {
-            res.status(error.statusCode);
-            res.send(error);
+        if (!serviceToken || serviceToken !== config.serviceSecret) {
+            return res.status(error.statusCode).send(error);
         }
+
+        const userId = req.headers['x-user-id'];
+        const userName = req.headers['x-user-name'];
+        const userEmail = req.headers['x-user-email'];
+        const organizationId = req.headers['x-organization-id'];
+        const roleId = req.headers['x-user-role-id'];
+        const permissionsHeader = req.headers['x-user-permissions'];
+
+        let permissions = [];
+        try {
+            permissions = permissionsHeader
+                ? JSON.parse(permissionsHeader)
+                : [];
+        } catch (_parseError) {
+            permissions = [];
+        }
+
+        const user = {
+            id: userId,
+            name: userName,
+            email: userEmail,
+            organizationId: organizationId,
+            roleId: roleId,
+            role: {
+                id: roleId,
+                permissions: permissions,
+            },
+        };
+
+        req.user = user;
+        req.cookies = req.cookies || {};
+        req.cookies.user = user;
+
+        next();
     } catch (_error) {
-        res.status(error.statusCode);
-        res.send(error);
+        res.status(error.statusCode).send(error);
     }
 };
