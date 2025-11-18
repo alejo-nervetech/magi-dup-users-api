@@ -31,6 +31,7 @@ class ListUsersController extends BaseController {
                     'subspecialization',
                     'roleId',
                     'organizationId',
+                    'facilityId',
                     'isActive',
                     'createdAt',
                     'updatedAt',

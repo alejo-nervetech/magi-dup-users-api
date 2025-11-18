@@ -17,6 +17,7 @@ class UserMapper {
         this.userType = params.userType;
         this.roleId = params.roleId;
         this.organizationId = params.organizationId;
+        this.facilityId = params.facilityId;
         this.isActive = params.isActive;
         this.createdAt = params.createdAt;
         this.updatedAt = params.updatedAt;
@@ -44,6 +45,7 @@ class UserMapper {
             userType: this.userType,
             roleId: this.roleId,
             organizationId: this.organizationId,
+            facilityId: this.facilityId,
             isActive: this.isActive,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,

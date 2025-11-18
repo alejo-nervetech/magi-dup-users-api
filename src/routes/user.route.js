@@ -11,6 +11,11 @@ const validateServiceToken = require('./../middlewares/validate-service-token');
 class UserRoute extends BaseRoute {
     load() {
         this.app.post('/v1/user/login', validateServiceToken, this.login);
+        this.app.post(
+            '/v1/user/register-facility-user',
+            validateServiceToken,
+            this.registerFacilityUser
+        );
         this.app.post('/v1/user', authenticate, this.createUser);
         this.app.get('/v1/users', authenticate, this.listUsers);
     }
@@ -55,6 +60,18 @@ class UserRoute extends BaseRoute {
                 req.user
             );
             res.send(new UserMapper(result.users, result.total));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async registerFacilityUser(req, res, next) {
+        try {
+            const user =
+                await userControllers.RegisterFacilityUserController.execute(
+                    req.body
+                );
+            res.send(new UserMapper(user.dataValues));
         } catch (error) {
             next(error);
         }
