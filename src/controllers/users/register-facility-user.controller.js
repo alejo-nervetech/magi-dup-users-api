@@ -6,13 +6,17 @@ const { Users, Roles } = require('../../../sequelize/models');
 const { hashPassword } = require('../../utils/bcrypt-utils');
 const { v6 } = require('uuid');
 
-class CreateUserController extends BaseController {
-    static async execute(userData, requestUser) {
+class RegisterFacilityUserController extends BaseController {
+    static async execute(userData) {
         try {
-            if (!requestUser.facilityId) {
-                throw new Errors.ForbiddenError(
-                    'Only facility users can create users'
+            if (!userData.facilityId) {
+                throw new Errors.BadRequestError(
+                    'facilityId is required for facility user registration'
                 );
+            }
+
+            if (!userData.organizationId) {
+                throw new Errors.BadRequestError('organizationId is required');
             }
 
             const existingUser = await Users.findOne({
@@ -28,15 +32,18 @@ class CreateUserController extends BaseController {
                 );
             }
 
-            const role = await Roles.findOne({
+            const ownerRole = await Roles.findOne({
                 where: {
-                    id: userData.roleId,
-                    organizationId: requestUser.organizationId,
+                    name: 'Owner',
+                    organizationId: userData.organizationId,
                 },
             });
 
-            if (!role) {
-                throw new Errors.ResourceNotFoundError('Role', userData.roleId);
+            if (!ownerRole) {
+                throw new Errors.ResourceNotFoundError(
+                    'Owner role not found for organization',
+                    userData.organizationId
+                );
             }
 
             const hashedPassword = await hashPassword(userData.password);
@@ -46,9 +53,9 @@ class CreateUserController extends BaseController {
                 name: userData.name,
                 email: userData.email,
                 password: hashedPassword,
-                roleId: userData.roleId,
-                organizationId: requestUser.organizationId,
-                facilityId: requestUser.facilityId,
+                roleId: ownerRole.id,
+                organizationId: userData.organizationId,
+                facilityId: userData.facilityId,
                 userType: userData.userType || 'employee',
                 specialization: userData.specialization || null,
                 subspecialization: userData.subspecialization || null,
@@ -62,4 +69,4 @@ class CreateUserController extends BaseController {
     }
 }
 
-module.exports = CreateUserController;
+module.exports = RegisterFacilityUserController;

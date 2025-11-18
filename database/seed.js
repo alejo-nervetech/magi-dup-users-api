@@ -119,6 +119,7 @@ async function createTestAdminUser(organizationId, ownerRoleId) {
         password: hashedPassword,
         name: 'Admin User',
         organizationId: organizationId,
+        facilityId: null,
         roleId: ownerRoleId,
         isActive: true,
     });
