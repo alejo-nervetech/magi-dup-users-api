@@ -2,6 +2,7 @@
 
 const AuthenticationFailureError = require('./authentication-failure.error');
 const BadRequestError = require('./bad-request.error');
+const BaseError = require('./base');
 const FileUploadError = require('./file-upload.error');
 const ForbiddenError = require('./forbidden.error');
 const InternalServerError = require('./internal-server.error');
@@ -13,6 +14,7 @@ const SchemaNotFoundError = require('./schema-not-found.error');
 module.exports = {
     AuthenticationFailureError,
     BadRequestError,
+    BaseError,
     FileUploadError,
     ForbiddenError,
     InternalServerError,
