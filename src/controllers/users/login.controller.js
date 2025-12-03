@@ -51,6 +51,7 @@ class LoginController extends BaseController {
                 organizationId: user.organizationId,
                 facilityId: user.facilityId,
                 roleId: user.roleId,
+                role: user.role?.name,
                 permissions: permissions,
             };
 
