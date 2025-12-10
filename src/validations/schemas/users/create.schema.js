@@ -34,6 +34,10 @@ module.exports = {
             type: 'string',
             maxLength: 255,
         },
+        departmentId: {
+            type: 'string',
+            pattern: '^dept_',
+        },
     },
     required: ['name', 'email', 'password', 'roleId'],
     additionalProperties: false,

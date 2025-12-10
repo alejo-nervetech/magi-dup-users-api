@@ -49,6 +49,7 @@ class CreateUserController extends BaseController {
                 roleId: userData.roleId,
                 organizationId: requestUser.organizationId,
                 facilityId: requestUser.facilityId,
+                departmentId: userData.departmentId,
                 userType: userData.userType || 'employee',
                 specialization: userData.specialization || null,
                 subspecialization: userData.subspecialization || null,
