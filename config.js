@@ -13,6 +13,7 @@ const {
     JWT_TOKEN,
     SERVICE_SECRET,
     NODE_ENV,
+    FACILITY_API_URL,
 } = process.env;
 
 module.exports = {
@@ -36,4 +37,7 @@ module.exports = {
     serviceSecret: SERVICE_SECRET,
     cors: CORS_ORIGIN ? CORS_ORIGIN.split(',') : [],
     env: NODE_ENV || 'development',
+    services: {
+        facilityApi: FACILITY_API_URL || 'http://localhost:3002',
+    },
 };

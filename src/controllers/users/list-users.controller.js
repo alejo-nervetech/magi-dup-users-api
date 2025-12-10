@@ -12,9 +12,7 @@ class ListUsersController extends BaseController {
             const organizationId = user.organizationId;
 
             const query = {
-                where: {
-                    organizationId: organizationId,
-                },
+                where: { organizationId },
                 include: [
                     {
                         model: Roles,
@@ -32,6 +30,7 @@ class ListUsersController extends BaseController {
                     'roleId',
                     'organizationId',
                     'facilityId',
+                    'departmentId',
                     'isActive',
                     'createdAt',
                     'updatedAt',
