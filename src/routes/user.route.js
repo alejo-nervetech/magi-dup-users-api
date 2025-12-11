@@ -7,6 +7,20 @@ const UserValidator = require('./../validations/user.validation');
 const userControllers = require('../controllers/users');
 const authenticate = require('./../middlewares/authenticate');
 const validateServiceToken = require('./../middlewares/validate-service-token');
+const multer = require('multer');
+const path = require('path');
+const UploadUserController = require('../controllers/users/upload-user.controller');
+
+const storage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (_req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
+
+const upload = multer({ storage: storage });
 
 class UserRoute extends BaseRoute {
     load() {
@@ -18,6 +32,12 @@ class UserRoute extends BaseRoute {
         );
         this.app.post('/v1/user', authenticate, this.createUser);
         this.app.get('/v1/users', authenticate, this.listUsers);
+        this.app.post(
+            '/v1/user/upload',
+            authenticate,
+            upload.single('csvFile'),
+            this.uploadUsers
+        );
     }
 
     async login(req, res, next) {
@@ -72,6 +92,15 @@ class UserRoute extends BaseRoute {
                     req.body
                 );
             res.send(new UserMapper(user.dataValues));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async uploadUsers(req, res, next) {
+        try {
+            const response = await UploadUserController.execute(req);
+            res.send(response);
         } catch (error) {
             next(error);
         }
