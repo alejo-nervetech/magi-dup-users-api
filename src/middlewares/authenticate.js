@@ -18,6 +18,7 @@ module.exports = async (req, res, next) => {
         const userEmail = req.headers['x-user-email'];
         const organizationId = req.headers['x-organization-id'];
         const facilityId = req.headers['x-facility-id'];
+        const departmentId = req.headers['x-department-id'];
         const roleId = req.headers['x-user-role-id'];
         const permissionsHeader = req.headers['x-user-permissions'];
 
@@ -36,6 +37,7 @@ module.exports = async (req, res, next) => {
             email: userEmail,
             organizationId: organizationId,
             facilityId: facilityId,
+            departmentId: departmentId,
             roleId: roleId,
             role: {
                 id: roleId,
