@@ -18,7 +18,7 @@ class UserMapper {
         this.roleId = params.roleId;
         this.organizationId = params.organizationId;
         this.facilityId = params.facilityId;
-        this.depatmentId = params.departmentId;
+        this.departmentId = params.departmentId;
         this.department = params.department;
         this.isActive = params.isActive;
         this.createdAt = params.createdAt;
@@ -48,7 +48,7 @@ class UserMapper {
             roleId: this.roleId,
             organizationId: this.organizationId,
             facilityId: this.facilityId,
-            departmetId: this.depatmentId,
+            departmetId: this.departmentId,
             department: this.department,
             isActive: this.isActive,
             createdAt: this.createdAt,
