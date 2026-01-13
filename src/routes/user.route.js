@@ -32,6 +32,9 @@ class UserRoute extends BaseRoute {
         );
         this.app.post('/v1/user', authenticate, this.createUser);
         this.app.get('/v1/users', authenticate, this.listUsers);
+        this.app.get('/v1/user/:id', authenticate, this.getUser);
+        this.app.put('/v1/user/:id', authenticate, this.updateUser);
+        this.app.delete('/v1/user/:id', authenticate, this.archiveUser);
         this.app.post(
             '/v1/user/upload',
             authenticate,
@@ -101,6 +104,47 @@ class UserRoute extends BaseRoute {
         try {
             const response = await UploadUserController.execute(req);
             res.send(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await userControllers.GetUserController.execute(
+                id,
+                req.user
+            );
+            res.send(new UserMapper(user));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            UserValidator.validate('update', req.body);
+            const user = await userControllers.UpdateUserController.execute(
+                id,
+                req.body,
+                req.user
+            );
+            res.send(new UserMapper(user.dataValues));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async archiveUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await userControllers.ArchiveUserController.execute(
+                id,
+                req.user
+            );
+            res.send(new UserMapper(user.dataValues));
         } catch (error) {
             next(error);
         }
