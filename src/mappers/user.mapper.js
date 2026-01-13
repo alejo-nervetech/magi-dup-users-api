@@ -48,7 +48,7 @@ class UserMapper {
             roleId: this.roleId,
             organizationId: this.organizationId,
             facilityId: this.facilityId,
-            departmetId: this.departmentId,
+            departmentId: this.departmentId,
             department: this.department,
             isActive: this.isActive,
             createdAt: this.createdAt,
