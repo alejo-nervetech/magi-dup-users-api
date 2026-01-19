@@ -24,17 +24,22 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'diagnosis_prognosis', accessType: 'W' },
         { resource: 'system_user', accessType: 'W' },
         { resource: 'infrastructure', accessType: 'W' },
+        { resource: 'requisition', accessType: 'W' },
+        { resource: 'requisition_approval', accessType: 'W' },
     ],
     NURSE: [
         { resource: 'patient_vitals', accessType: 'W' },
         { resource: 'patient_information', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'R' },
+        { resource: 'requisition', accessType: 'W' },
     ],
     DOCTOR: [
         { resource: 'patient_vitals', accessType: 'W' },
         { resource: 'patient_information', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'W' },
         { resource: 'diagnosis_prognosis', accessType: 'W' },
+        { resource: 'requisition', accessType: 'W' },
+        { resource: 'requisition_approval', accessType: 'W' },
     ],
 };
 
