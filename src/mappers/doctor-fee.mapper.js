@@ -16,8 +16,8 @@ class DoctorFeeMapper {
         this.caseId = params.caseId;
         this.cptCode = params.cptCode;
         this.baseFee = Number(params.baseFee);
-        this.adjustment = Number(params.adjustment);
-        this.adjustmentType = params.adjustmentType;
+        this.positiveAdjustment = Number(params.positiveAdjustment || 0);
+        this.negativeAdjustment = Number(params.negativeAdjustment || 0);
         this.justification = params.justification;
         this.finalFee = Number(params.finalFee);
         this.createdAt = params.createdAt;
@@ -33,8 +33,8 @@ class DoctorFeeMapper {
             caseId: this.caseId,
             cptCode: this.cptCode,
             baseFee: this.baseFee,
-            adjustment: this.adjustment,
-            adjustmentType: this.adjustmentType,
+            positiveAdjustment: this.positiveAdjustment,
+            negativeAdjustment: this.negativeAdjustment,
             justification: this.justification,
             finalFee: this.finalFee,
             createdAt: this.createdAt,

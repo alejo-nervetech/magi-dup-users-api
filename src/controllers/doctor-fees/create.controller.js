@@ -3,7 +3,6 @@
 const Errors = require('../../errors');
 const { DoctorFees } = require('../../../sequelize/models');
 const BaseController = require('../base-controller');
-const { v6 } = require('uuid');
 
 class CreateDoctorFee extends BaseController {
     static async execute(feeData) {
@@ -13,43 +12,35 @@ class CreateDoctorFee extends BaseController {
                 caseId,
                 cptCode,
                 baseFee,
-                adjustment,
-                adjustmentType,
+                positiveAdjustment,
+                negativeAdjustment,
                 justification,
             } = feeData;
 
             if (!doctorId)
                 throw new Errors.BadRequestError('doctorId is required');
-            if (!caseId) throw new Errors.BadRequestError('caseId is required');
             if (!baseFee)
                 throw new Errors.BadRequestError('baseFee is required');
 
-            const adj = Number(adjustment || 0);
+            const posAdj = Number(positiveAdjustment || 0);
+            const negAdj = Number(negativeAdjustment || 0);
+            const hasAdjustments = posAdj > 0 || negAdj > 0;
 
-            if (adj > 0 && !adjustmentType)
-                throw new Errors.ValidationError(
-                    'adjustmentType is required when adjustment is provided'
-                );
-
-            if (adjustmentType && !justification)
+            if (hasAdjustments && !justification)
                 throw new Errors.BadRequestError(
-                    'justification is required for adjustments'
+                    'justification is required when adjustments are applied'
                 );
 
-            let finalFee = Number(baseFee);
-
-            if (adjustmentType === 'positive') finalFee += adj;
-            if (adjustmentType === 'negative') finalFee -= adj;
-
+            let finalFee = Number(baseFee) + posAdj - negAdj;
             if (finalFee < 0) finalFee = 0;
 
             const newFee = await DoctorFees.create({
                 doctorId,
-                caseId,
+                caseId: caseId || null,
                 cptCode,
                 baseFee,
-                adjustment: adj,
-                adjustmentType,
+                positiveAdjustment: posAdj,
+                negativeAdjustment: negAdj,
                 justification,
                 finalFee,
             });

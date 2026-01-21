@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             caseId: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             cptCode: {
                 type: DataTypes.STRING,
@@ -38,14 +38,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
             },
-            adjustment: {
+            positiveAdjustment: {
                 type: DataTypes.DECIMAL(10, 2),
                 defaultValue: 0,
                 allowNull: false,
             },
-            adjustmentType: {
-                type: DataTypes.ENUM('positive', 'negative'),
-                allowNull: true,
+            negativeAdjustment: {
+                type: DataTypes.DECIMAL(10, 2),
+                defaultValue: 0,
+                allowNull: false,
             },
             justification: {
                 type: DataTypes.TEXT,
