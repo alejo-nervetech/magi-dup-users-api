@@ -12,15 +12,15 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             });
-            Roles.hasMany(models.Users, {
-                foreignKey: 'roleId',
-                as: 'users',
-                onDelete: 'SET NULL',
-                onUpdate: 'CASCADE',
-            });
             Roles.hasMany(models.Permissions, {
                 foreignKey: 'roleId',
                 as: 'permissions',
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+            });
+            Roles.hasMany(models.UserDepartments, {
+                foreignKey: 'roleId',
+                as: 'userDepartments',
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
             });

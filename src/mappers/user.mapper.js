@@ -15,11 +15,8 @@ class UserMapper {
         this.name = params.name;
         this.email = params.email;
         this.userType = params.userType;
-        this.roleId = params.roleId;
         this.organizationId = params.organizationId;
         this.facilityId = params.facilityId;
-        this.departmentId = params.departmentId;
-        this.department = params.department;
         this.isActive = params.isActive;
         this.createdAt = params.createdAt;
         this.updatedAt = params.updatedAt;
@@ -29,11 +26,21 @@ class UserMapper {
             this.subspecialization = params.subspecialization || null;
         }
 
-        if (params.role) {
-            this.role = {
-                id: params.role.id,
-                name: params.role.name,
-            };
+        if (params.departmentAssignments) {
+            this.departmentAssignments = params.departmentAssignments.map(
+                (assignment) => ({
+                    id: assignment.id,
+                    departmentId: assignment.departmentId,
+                    department: assignment.department,
+                    roleId: assignment.roleId,
+                    role: assignment.role
+                        ? {
+                              id: assignment.role.id,
+                              name: assignment.role.name,
+                          }
+                        : null,
+                })
+            );
         }
 
         return this.object();
@@ -45,11 +52,8 @@ class UserMapper {
             name: this.name,
             email: this.email,
             userType: this.userType,
-            roleId: this.roleId,
             organizationId: this.organizationId,
             facilityId: this.facilityId,
-            departmentId: this.departmentId,
-            department: this.department,
             isActive: this.isActive,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
@@ -60,8 +64,8 @@ class UserMapper {
             mapped.subspecialization = this.subspecialization;
         }
 
-        if (this.role) {
-            mapped.role = this.role;
+        if (this.departmentAssignments) {
+            mapped.departmentAssignments = this.departmentAssignments;
         }
 
         return mapped;

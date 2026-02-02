@@ -2,12 +2,19 @@
 
 const BaseController = require('../base-controller');
 const Errors = require('./../../errors');
-const { Users, Roles } = require('../../../sequelize/models');
+const {
+    Users,
+    Roles,
+    UserDepartments,
+    sequelize,
+} = require('../../../sequelize/models');
 const { hashPassword } = require('../../utils/bcrypt-utils');
 const { v6 } = require('uuid');
 
 class RegisterFacilityUserController extends BaseController {
     static async execute(userData) {
+        const transaction = await sequelize.transaction();
+
         try {
             if (!userData.facilityId) {
                 throw new Errors.BadRequestError(
@@ -17,6 +24,12 @@ class RegisterFacilityUserController extends BaseController {
 
             if (!userData.organizationId) {
                 throw new Errors.BadRequestError('organizationId is required');
+            }
+
+            if (!userData.departmentId) {
+                throw new Errors.BadRequestError(
+                    'departmentId is required for facility user registration'
+                );
             }
 
             const existingUser = await Users.findOne({
@@ -48,22 +61,37 @@ class RegisterFacilityUserController extends BaseController {
 
             const hashedPassword = await hashPassword(userData.password);
 
-            const user = await Users.create({
-                id: `usr_${v6().replace(/[^\w\s]/gi, '')}`,
-                name: userData.name,
-                email: userData.email,
-                password: hashedPassword,
-                roleId: ownerRole.id,
-                organizationId: userData.organizationId,
-                facilityId: userData.facilityId,
-                userType: userData.userType || 'employee',
-                specialization: userData.specialization || null,
-                subspecialization: userData.subspecialization || null,
-                isActive: true,
-            });
+            const user = await Users.create(
+                {
+                    id: `usr_${v6().replace(/[^\w\s]/gi, '')}`,
+                    name: userData.name,
+                    email: userData.email,
+                    password: hashedPassword,
+                    organizationId: userData.organizationId,
+                    facilityId: userData.facilityId,
+                    userType: userData.userType || 'employee',
+                    specialization: userData.specialization || null,
+                    subspecialization: userData.subspecialization || null,
+                    isActive: true,
+                },
+                { transaction }
+            );
+
+            await UserDepartments.create(
+                {
+                    id: `udept_${v6().replace(/[^\w\s]/gi, '')}`,
+                    userId: user.id,
+                    departmentId: userData.departmentId,
+                    roleId: ownerRole.id,
+                },
+                { transaction }
+            );
+
+            await transaction.commit();
 
             return user;
         } catch (error) {
+            await transaction.rollback();
             throw error;
         }
     }
