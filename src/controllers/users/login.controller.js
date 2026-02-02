@@ -2,9 +2,16 @@
 
 const BaseController = require('../base-controller');
 const Errors = require('./../../errors');
-const { Users, Roles, Permissions } = require('../../../sequelize/models');
+const {
+    Users,
+    Roles,
+    Permissions,
+    UserDepartments,
+} = require('../../../sequelize/models');
 const { comparePassword } = require('../../utils/bcrypt-utils');
 const { generateToken } = require('../../utils/jwt-utils');
+const config = require('../../../config');
+const axios = require('axios');
 
 class LoginController extends BaseController {
     static async execute(email, password) {
@@ -16,12 +23,18 @@ class LoginController extends BaseController {
                 },
                 include: [
                     {
-                        model: Roles,
-                        as: 'role',
+                        model: UserDepartments,
+                        as: 'departmentAssignments',
                         include: [
                             {
-                                model: Permissions,
-                                as: 'permissions',
+                                model: Roles,
+                                as: 'role',
+                                include: [
+                                    {
+                                        model: Permissions,
+                                        as: 'permissions',
+                                    },
+                                ],
                             },
                         ],
                     },
@@ -38,11 +51,28 @@ class LoginController extends BaseController {
                 throw new Errors.AuthenticationFailureError();
             }
 
-            const permissions =
-                user.role?.permissions?.map((p) => ({
-                    resource: p.resource,
-                    accessType: p.accessType,
-                })) || [];
+            const departmentAssignments = await Promise.all(
+                (user.departmentAssignments || []).map(async (assignment) => {
+                    const permissions =
+                        assignment.role?.permissions?.map((p) => ({
+                            resource: p.resource,
+                            accessType: p.accessType,
+                        })) || [];
+
+                    const departmentName =
+                        await LoginController.getDepartmentName(
+                            assignment.departmentId
+                        );
+
+                    return {
+                        departmentId: assignment.departmentId,
+                        departmentName: departmentName,
+                        roleId: assignment.roleId,
+                        roleName: assignment.role?.name,
+                        permissions: permissions,
+                    };
+                })
+            );
 
             const sessionData = {
                 id: user.id,
@@ -50,15 +80,32 @@ class LoginController extends BaseController {
                 email: user.email,
                 organizationId: user.organizationId,
                 facilityId: user.facilityId,
-                departmentId: user.departmentId,
-                roleId: user.roleId,
-                role: user.role?.name,
-                permissions: permissions,
+                departmentAssignments: departmentAssignments,
             };
 
             return generateToken(sessionData);
         } catch (error) {
             throw error;
+        }
+    }
+
+    static async getDepartmentName(departmentId) {
+        if (!departmentId) {
+            return null;
+        }
+
+        const url = `${config.services.facilityApi}/v1/departments/${departmentId}`;
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Service-Token': config.serviceSecret,
+                    'Content-Type': 'application/json',
+                },
+            });
+            return response.data || departmentId;
+        } catch (error) {
+            return departmentId;
         }
     }
 }

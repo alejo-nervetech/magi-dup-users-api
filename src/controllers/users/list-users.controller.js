@@ -1,6 +1,6 @@
 'use strict';
 
-const { Users, Roles } = require('../../../sequelize/models');
+const { Users, Roles, UserDepartments } = require('../../../sequelize/models');
 const { Op } = require('sequelize');
 const BaseController = require('../base-controller');
 const config = require('../../../config');
@@ -9,17 +9,29 @@ const axios = require('axios');
 class ListUsersController extends BaseController {
     static async execute(params = {}, user) {
         try {
-            const { sortBy, sortColumn, pageSize, offsetValue, search } =
-                params;
+            const {
+                sortBy,
+                sortColumn,
+                pageSize,
+                offsetValue,
+                search,
+                departmentId,
+            } = params;
             const organizationId = user.organizationId;
 
             const query = {
                 where: { organizationId },
                 include: [
                     {
-                        model: Roles,
-                        as: 'role',
-                        attributes: ['id', 'name'],
+                        model: UserDepartments,
+                        as: 'departmentAssignments',
+                        include: [
+                            {
+                                model: Roles,
+                                as: 'role',
+                                attributes: ['id', 'name'],
+                            },
+                        ],
                     },
                 ],
                 attributes: [
@@ -29,10 +41,8 @@ class ListUsersController extends BaseController {
                     'userType',
                     'specialization',
                     'subspecialization',
-                    'roleId',
                     'organizationId',
                     'facilityId',
-                    'departmentId',
                     'isActive',
                     'createdAt',
                     'updatedAt',
@@ -44,7 +54,6 @@ class ListUsersController extends BaseController {
                             'name',
                             'email',
                             'userType',
-                            'roleId',
                             'isActive',
                             'createdAt',
                             'updatedAt',
@@ -65,6 +74,15 @@ class ListUsersController extends BaseController {
                 ];
             }
 
+            if (departmentId) {
+                query.where.id = {
+                    [Op.in]:
+                        await ListUsersController.getUserIdsByDepartment(
+                            departmentId
+                        ),
+                };
+            }
+
             if (pageSize !== undefined || offsetValue !== undefined) {
                 query.limit = Math.max(1, parseInt(pageSize) || 10);
                 query.offset = Math.max(0, parseInt(offsetValue) || 0);
@@ -77,15 +95,30 @@ class ListUsersController extends BaseController {
 
             const usersWithDepartments = await Promise.all(
                 users.map(async (user) => {
-                    const department =
-                        await ListUsersController.getUserDepartment(
-                            user.departmentId
-                        );
-                    return { ...user.toJSON(), department };
+                    const departmentAssignmentsWithDetails = await Promise.all(
+                        (user.departmentAssignments || []).map(
+                            async (assignment) => {
+                                const department =
+                                    await ListUsersController.getDepartment(
+                                        assignment.departmentId
+                                    );
+                                return {
+                                    id: assignment.id,
+                                    departmentId: assignment.departmentId,
+                                    department: department,
+                                    roleId: assignment.roleId,
+                                    role: assignment.role,
+                                };
+                            }
+                        )
+                    );
+
+                    return {
+                        ...user.toJSON(),
+                        departmentAssignments: departmentAssignmentsWithDetails,
+                    };
                 })
             );
-
-            console.log(usersWithDepartments);
 
             return { users: usersWithDepartments, total };
         } catch (error) {
@@ -93,7 +126,15 @@ class ListUsersController extends BaseController {
         }
     }
 
-    static async getUserDepartment(departmentId) {
+    static async getUserIdsByDepartment(departmentId) {
+        const assignments = await UserDepartments.findAll({
+            where: { departmentId },
+            attributes: ['userId'],
+        });
+        return assignments.map((a) => a.userId);
+    }
+
+    static async getDepartment(departmentId) {
         if (!departmentId) {
             return null;
         }
@@ -108,7 +149,7 @@ class ListUsersController extends BaseController {
             });
             return response.data;
         } catch (error) {
-            throw error;
+            return null;
         }
     }
 }

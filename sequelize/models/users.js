@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             });
-            Users.belongsTo(models.Roles, {
-                foreignKey: 'roleId',
-                as: 'role',
+            Users.hasMany(models.UserDepartments, {
+                foreignKey: 'userId',
+                as: 'departmentAssignments',
+                onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL',
             });
         }
     }
@@ -48,14 +48,6 @@ module.exports = (sequelize, DataTypes) => {
             facilityId: {
                 type: DataTypes.STRING,
                 allowNull: true,
-            },
-            departmentId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            roleId: {
-                type: DataTypes.STRING,
-                allowNull: false,
             },
             userType: {
                 type: DataTypes.STRING,

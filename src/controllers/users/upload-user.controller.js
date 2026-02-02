@@ -2,7 +2,7 @@
 
 const BaseController = require('../base-controller');
 const Errors = require('./../../errors');
-const { Users, Roles } = require('../../../sequelize/models');
+const { Users, Roles, UserDepartments } = require('../../../sequelize/models');
 const { hashPassword } = require('../../utils/bcrypt-utils');
 const { v6 } = require('uuid');
 const path = require('path');
@@ -83,19 +83,31 @@ class UploadUserController extends BaseController {
                         .join(' ')
                         .trim();
 
+                    if (!departmentId || !roleId) {
+                        throw new Error(
+                            'Both department and role are required'
+                        );
+                    }
+
                     const userData = {
+                        id: `usr_${v6().replace(/[^\w\s]/gi, '')}`,
                         name: fullName,
                         email: row.email,
                         password: await hashPassword(row.password),
                         organizationId: req.user.organizationId,
-                        departmentId,
-                        roleId,
                         facilityId: req.user.facilityId,
                         specialization: row.specialization || null,
                         subspecialization: row.subspecialization || null,
                     };
 
-                    await Users.create(userData);
+                    const user = await Users.create(userData);
+
+                    await UserDepartments.create({
+                        id: `udept_${v6().replace(/[^\w\s]/gi, '')}`,
+                        userId: user.id,
+                        departmentId,
+                        roleId,
+                    });
                 } catch (err) {
                     let errorMessage = err.message;
 

@@ -1,7 +1,7 @@
 'use strict';
 
 const Errors = require('../../errors');
-const { Users, Roles } = require('../../../sequelize/models');
+const { Users, Roles, UserDepartments } = require('../../../sequelize/models');
 const BaseController = require('../base-controller');
 const config = require('../../../config');
 const axios = require('axios');
@@ -18,9 +18,15 @@ class GetUserController extends BaseController {
                 },
                 include: [
                     {
-                        model: Roles,
-                        as: 'role',
-                        attributes: ['id', 'name'],
+                        model: UserDepartments,
+                        as: 'departmentAssignments',
+                        include: [
+                            {
+                                model: Roles,
+                                as: 'role',
+                                attributes: ['id', 'name'],
+                            },
+                        ],
                     },
                 ],
                 attributes: [
@@ -30,10 +36,8 @@ class GetUserController extends BaseController {
                     'userType',
                     'specialization',
                     'subspecialization',
-                    'roleId',
                     'organizationId',
                     'facilityId',
-                    'departmentId',
                     'isActive',
                     'createdAt',
                     'updatedAt',
@@ -44,17 +48,31 @@ class GetUserController extends BaseController {
                 throw new Errors.ResourceNotFoundError('User', userId);
             }
 
-            const department = await GetUserController.getUserDepartment(
-                user.departmentId
+            const departmentAssignmentsWithDetails = await Promise.all(
+                (user.departmentAssignments || []).map(async (assignment) => {
+                    const department = await GetUserController.getDepartment(
+                        assignment.departmentId
+                    );
+                    return {
+                        id: assignment.id,
+                        departmentId: assignment.departmentId,
+                        department: department,
+                        roleId: assignment.roleId,
+                        role: assignment.role,
+                    };
+                })
             );
 
-            return { ...user.toJSON(), department };
+            return {
+                ...user.toJSON(),
+                departmentAssignments: departmentAssignmentsWithDetails,
+            };
         } catch (error) {
             throw error;
         }
     }
 
-    static async getUserDepartment(departmentId) {
+    static async getDepartment(departmentId) {
         if (!departmentId) {
             return null;
         }

@@ -13,10 +13,6 @@ module.exports = {
             format: 'email',
             maxLength: 255,
         },
-        roleId: {
-            type: 'string',
-            pattern: '^role_',
-        },
         userType: {
             type: 'string',
             enum: ['employee', 'doctor'],
@@ -29,9 +25,24 @@ module.exports = {
             type: ['string', 'null'],
             maxLength: 255,
         },
-        departmentId: {
-            type: ['string', 'null'],
-            pattern: '^dept_',
+        departmentAssignments: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                type: 'object',
+                properties: {
+                    departmentId: {
+                        type: 'string',
+                        pattern: '^dept_',
+                    },
+                    roleId: {
+                        type: 'string',
+                        pattern: '^role_',
+                    },
+                },
+                required: ['departmentId', 'roleId'],
+                additionalProperties: false,
+            },
         },
         isActive: {
             type: 'boolean',

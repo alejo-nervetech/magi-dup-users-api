@@ -5,6 +5,7 @@ const {
     Permissions,
     Organizations,
     Users,
+    UserDepartments,
 } = require('../sequelize/models');
 const { v6 } = require('uuid');
 const { hashPassword } = require('../src/utils/bcrypt-utils');
@@ -106,7 +107,11 @@ async function createDefaultRolesForOrganization(organizationId) {
     };
 }
 
-async function createTestAdminUser(organizationId, ownerRoleId) {
+async function createTestAdminUser(
+    organizationId,
+    ownerRoleId,
+    departmentId = null
+) {
     const existingAdmin = await Users.findOne({
         where: { email: 'admin@nervetech.com' },
     });
@@ -125,8 +130,14 @@ async function createTestAdminUser(organizationId, ownerRoleId) {
         name: 'Admin User',
         organizationId: organizationId,
         facilityId: null,
-        roleId: ownerRoleId,
         isActive: true,
+    });
+
+    await UserDepartments.create({
+        id: `udept_${v6().replace(/[^\w\s]/gi, '')}`,
+        userId: adminUser.id,
+        departmentId: departmentId || 'dept_default',
+        roleId: ownerRoleId,
     });
 
     console.log('Test admin user created successfully');

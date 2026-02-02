@@ -18,10 +18,6 @@ module.exports = {
             minLength: 8,
             maxLength: 255,
         },
-        roleId: {
-            type: 'string',
-            pattern: '^role_',
-        },
         userType: {
             type: 'string',
             enum: ['employee', 'doctor'],
@@ -34,19 +30,35 @@ module.exports = {
             type: 'string',
             maxLength: 255,
         },
-        departmentId: {
-            type: 'string',
-            pattern: '^dept_',
+        departmentAssignments: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                type: 'object',
+                properties: {
+                    departmentId: {
+                        type: 'string',
+                        pattern: '^dept_',
+                    },
+                    roleId: {
+                        type: 'string',
+                        pattern: '^role_',
+                    },
+                },
+                required: ['departmentId', 'roleId'],
+                additionalProperties: false,
+            },
         },
     },
-    required: ['name', 'email', 'password', 'roleId'],
+    required: ['name', 'email', 'password', 'departmentAssignments'],
     additionalProperties: false,
     errorMessage: {
         required: {
             name: 'Name is required',
             email: 'Email is required',
             password: 'Password is required',
-            roleId: 'Role ID is required',
+            departmentAssignments:
+                'At least one department assignment is required',
         },
     },
 };
