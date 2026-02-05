@@ -6,6 +6,7 @@ const CreateDoctorFee = require('../controllers/doctor-fees/create.controller');
 const GetDoctorFeeSettings = require('../controllers/doctor-fees/get.controller');
 const UpdateDoctorFeeSettings = require('../controllers/doctor-fees/update.controller');
 const DoctorFeeMapper = require('../mappers/doctor-fee.mapper');
+const e = require('express');
 
 class DoctorFeeRoute extends BaseRoute {
     load() {

@@ -16,6 +16,7 @@ class UpdateDoctorFeeSettings extends BaseController {
                 positiveAdjustment,
                 negativeAdjustment,
                 justification,
+                caseId,
             } = feeData;
 
             if (!baseFee)
@@ -48,6 +49,7 @@ class UpdateDoctorFeeSettings extends BaseController {
                     negativeAdjustment: negAdj,
                     justification,
                     finalFee,
+                    caseId,
                 });
                 return existingSettings;
             } else {
