@@ -19,8 +19,14 @@ class ListUsersController extends BaseController {
             } = params;
             const organizationId = user.organizationId;
 
+            const where = { organizationId };
+
+            if (user.facilityId) {
+                where.facilityId = user.facilityId;
+            }
+
             const query = {
-                where: { organizationId },
+                where,
                 include: [
                     {
                         model: UserDepartments,
