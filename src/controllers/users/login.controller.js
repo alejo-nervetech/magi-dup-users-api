@@ -51,28 +51,56 @@ class LoginController extends BaseController {
                 throw new Errors.AuthenticationFailureError();
             }
 
-            const departmentAssignments = await Promise.all(
-                (user.departmentAssignments || []).map(async (assignment) => {
-                    const permissions =
-                        assignment.role?.permissions?.map((p) => ({
-                            resource: p.resource,
-                            accessType: p.accessType,
-                        })) || [];
+            let departmentAssignments;
 
-                    const departmentName =
-                        await LoginController.getDepartmentName(
-                            assignment.departmentId
-                        );
+            if (
+                !user.departmentAssignments ||
+                user.departmentAssignments.length === 0
+            ) {
+                const orgRole = await Roles.findOne({
+                    where: { organizationId: user.organizationId },
+                    include: [{ model: Permissions, as: 'permissions' }],
+                });
 
-                    return {
-                        departmentId: assignment.departmentId,
-                        departmentName: departmentName,
-                        roleId: assignment.roleId,
-                        roleName: assignment.role?.name,
-                        permissions: permissions,
-                    };
-                })
-            );
+                departmentAssignments = orgRole
+                    ? [
+                          {
+                              departmentId: null,
+                              departmentName: null,
+                              roleId: orgRole.id,
+                              roleName: orgRole.name,
+                              permissions:
+                                  orgRole.permissions?.map((p) => ({
+                                      resource: p.resource,
+                                      accessType: p.accessType,
+                                  })) || [],
+                          },
+                      ]
+                    : [];
+            } else {
+                departmentAssignments = await Promise.all(
+                    user.departmentAssignments.map(async (assignment) => {
+                        const permissions =
+                            assignment.role?.permissions?.map((p) => ({
+                                resource: p.resource,
+                                accessType: p.accessType,
+                            })) || [];
+
+                        const departmentName =
+                            await LoginController.getDepartmentName(
+                                assignment.departmentId
+                            );
+
+                        return {
+                            departmentId: assignment.departmentId,
+                            departmentName: departmentName,
+                            roleId: assignment.roleId,
+                            roleName: assignment.role?.name,
+                            permissions: permissions,
+                        };
+                    })
+                );
+            }
 
             const sessionData = {
                 id: user.id,

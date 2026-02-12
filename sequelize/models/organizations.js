@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            isPlatform: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
+            },
             isActive: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
