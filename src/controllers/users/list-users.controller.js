@@ -17,12 +17,11 @@ class ListUsersController extends BaseController {
                 search,
                 departmentId,
             } = params;
-            const organizationId = user.organizationId;
-
-            const where = { organizationId };
+            const where = {};
 
             if (user.facilityId) {
                 where.facilityId = user.facilityId;
+                where.organizationId = user.organizationId;
             }
 
             const query = {
