@@ -11,35 +11,55 @@ const DEFAULT_ROLES = {
 
 const DEFAULT_PERMISSIONS = {
     OWNER: [
-        { resource: 'role', accessType: 'W' },
+        { resource: 'dashboard', accessType: 'W' },
+        { resource: 'patient_records', accessType: 'W' },
+        { resource: 'patient_registration', accessType: 'W' },
+        { resource: 'patient_info_edit', accessType: 'W' },
+        { resource: 'case_registry', accessType: 'W' },
+        { resource: 'infrastructure', accessType: 'W' },
+        { resource: 'departments', accessType: 'W' },
+        { resource: 'transfers', accessType: 'W' },
+        { resource: 'hmo', accessType: 'W' },
+        { resource: 'patient_guarantors', accessType: 'W' },
+        { resource: 'user_management', accessType: 'W' },
+        { resource: 'role_management', accessType: 'W' },
+        { resource: 'doctors_fee', accessType: 'W' },
         { resource: 'patient_vitals', accessType: 'W' },
-        { resource: 'patient_information', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'W' },
         { resource: 'diagnosis_prognosis', accessType: 'W' },
-        { resource: 'system_user', accessType: 'W' },
-        { resource: 'infrastructure', accessType: 'W' },
+        { resource: 'inventory', accessType: 'W' },
         { resource: 'requisition', accessType: 'W' },
         { resource: 'requisition_approval', accessType: 'W' },
+        { resource: 'system_settings', accessType: 'W' },
     ],
     NURSE: [
+        { resource: 'dashboard', accessType: 'R' },
+        { resource: 'patient_records', accessType: 'R' },
+        { resource: 'patient_info_edit', accessType: 'W' },
         { resource: 'patient_vitals', accessType: 'W' },
-        { resource: 'patient_information', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'R' },
+        { resource: 'case_registry', accessType: 'R' },
         { resource: 'requisition', accessType: 'W' },
     ],
     DOCTOR: [
+        { resource: 'dashboard', accessType: 'R' },
+        { resource: 'patient_records', accessType: 'W' },
+        { resource: 'patient_registration', accessType: 'W' },
+        { resource: 'patient_info_edit', accessType: 'W' },
         { resource: 'patient_vitals', accessType: 'W' },
-        { resource: 'patient_information', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'W' },
         { resource: 'diagnosis_prognosis', accessType: 'W' },
+        { resource: 'case_registry', accessType: 'W' },
         { resource: 'requisition', accessType: 'W' },
         { resource: 'requisition_approval', accessType: 'W' },
     ],
 };
 
 const PLATFORM_ADMIN_PERMISSIONS = [
+    { resource: 'user_management', accessType: 'W' },
+    { resource: 'role_management', accessType: 'W' },
     { resource: 'infrastructure', accessType: 'W' },
-    { resource: 'system_user', accessType: 'W' },
+    { resource: 'departments', accessType: 'W' },
 ];
 
 async function createRoleWithPermissions(
