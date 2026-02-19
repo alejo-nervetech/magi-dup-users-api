@@ -25,6 +25,7 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'role_management', accessType: 'W' },
         { resource: 'doctors_fee', accessType: 'W' },
         { resource: 'patient_vitals', accessType: 'W' },
+        { resource: 'patient_diet', accessType: 'W' },
         { resource: 'doctor_orders', accessType: 'W' },
         { resource: 'diagnosis_prognosis', accessType: 'W' },
         { resource: 'inventory', accessType: 'W' },
