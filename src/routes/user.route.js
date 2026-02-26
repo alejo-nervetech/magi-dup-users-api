@@ -10,6 +10,7 @@ const validateServiceToken = require('./../middlewares/validate-service-token');
 const multer = require('multer');
 const path = require('path');
 const UploadUserController = require('../controllers/users/upload-user.controller');
+const GetUsersByIdsController = require('../controllers/users/get-users-by-ids.controller');
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
@@ -40,6 +41,11 @@ class UserRoute extends BaseRoute {
             authenticate,
             upload.single('csvFile'),
             this.uploadUsers
+        );
+        this.app.post(
+            '/v1/users/by-ids',
+            validateServiceToken,
+            this.getUsersByIds
         );
     }
 
@@ -145,6 +151,15 @@ class UserRoute extends BaseRoute {
                 req.user
             );
             res.send(new UserMapper(user.dataValues));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUsersByIds(req, res, next) {
+        try {
+            const result = await GetUsersByIdsController.execute(req.body);
+            res.send(result);
         } catch (error) {
             next(error);
         }

@@ -16,6 +16,9 @@ class ListUsersController extends BaseController {
                 offsetValue,
                 search,
                 departmentId,
+                userType,
+                specialization,
+                excludeIds,
             } = params;
             const where = {};
 
@@ -72,6 +75,24 @@ class ListUsersController extends BaseController {
                 ],
             };
 
+            if (userType) {
+                query.where.userType = userType;
+            }
+
+            if (specialization) {
+                query.where.specialization = specialization;
+            }
+
+            if (excludeIds) {
+                const idsToExclude = excludeIds.split(',').filter(Boolean);
+                if (idsToExclude.length > 0) {
+                    query.where.id = {
+                        ...query.where.id,
+                        [Op.notIn]: idsToExclude,
+                    };
+                }
+            }
+
             if (search) {
                 query.where[Op.or] = [
                     { name: { [Op.like]: `%${search}%` } },
@@ -81,6 +102,7 @@ class ListUsersController extends BaseController {
 
             if (departmentId) {
                 query.where.id = {
+                    ...query.where.id,
                     [Op.in]:
                         await ListUsersController.getUserIdsByDepartment(
                             departmentId
