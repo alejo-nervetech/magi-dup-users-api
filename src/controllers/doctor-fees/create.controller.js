@@ -36,7 +36,7 @@ class CreateDoctorFee extends BaseController {
 
             const newFee = await DoctorFees.create({
                 doctorId,
-                caseId: caseId || null,
+                caseId: caseId ?? null,
                 cptCode,
                 baseFee,
                 positiveAdjustment: posAdj,

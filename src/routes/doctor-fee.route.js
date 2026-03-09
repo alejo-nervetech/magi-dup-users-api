@@ -7,6 +7,7 @@ const GetDoctorFeeSettings = require('../controllers/doctor-fees/get.controller'
 const UpdateDoctorFeeSettings = require('../controllers/doctor-fees/update.controller');
 const DoctorFeeMapper = require('../mappers/doctor-fee.mapper');
 const e = require('express');
+const GetCaseDoctorFeeController = require('../controllers/doctor-fees/get-case-fee.controller');
 
 class DoctorFeeRoute extends BaseRoute {
     load() {
@@ -20,6 +21,11 @@ class DoctorFeeRoute extends BaseRoute {
             '/v1/doctor-fee/settings/:doctorId',
             authenticate,
             this.updateDoctorFeeSettings
+        );
+        this.app.get(
+            '/v1/doctor-fee/case/:caseId',
+            authenticate,
+            this.getCaseDoctorFee
         );
     }
 
@@ -53,6 +59,18 @@ class DoctorFeeRoute extends BaseRoute {
                 req.body
             );
             res.send({ data: new DoctorFeeMapper(response.dataValues) });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCaseDoctorFee(req, res, next) {
+        try {
+            const response = await GetCaseDoctorFeeController.execute(
+                req.params.caseId,
+                req.body
+            );
+            res.send(response);
         } catch (error) {
             next(error);
         }
