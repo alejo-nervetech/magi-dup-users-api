@@ -31,6 +31,7 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'requisition', accessType: 'W' },
         { resource: 'requisition_approval', accessType: 'W' },
         { resource: 'system_settings', accessType: 'W' },
+        { resource: 'patient_invoice', accessType: 'W' },
     ],
     NURSE: [
         { resource: 'dashboard', accessType: 'R' },
@@ -39,6 +40,7 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'doctor_orders', accessType: 'R' },
         { resource: 'case_registry', accessType: 'R' },
         { resource: 'requisition', accessType: 'W' },
+        { resource: 'patient_invoice', accessType: 'R' },
     ],
     DOCTOR: [
         { resource: 'dashboard', accessType: 'R' },
@@ -49,6 +51,7 @@ const DEFAULT_PERMISSIONS = {
         { resource: 'case_registry', accessType: 'W' },
         { resource: 'requisition', accessType: 'W' },
         { resource: 'requisition_approval', accessType: 'W' },
+        { resource: 'patient_invoice', accessType: 'R' },
     ],
 };
 
