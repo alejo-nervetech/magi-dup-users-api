@@ -55,36 +55,37 @@ class Server {
     }
 
     async start() {
-        const port = this.config.port;
+    const port = this.config.port;
+
+    this.setupMiddleware();
+
     this.app.get('/healthcheck', (_req, res) => {
-            res.send('ok');
-        this.setupMiddleware();
-        this.setupEndpoints();
+        res.send('ok');
+    });
 
-        dbClient.authenticate();
+    this.setupEndpoints();
 
-    
-        });
+    dbClient.authenticate();
 
-        this.app.use((error, _req, res, _next) => {
-            try {
-                res.status(error.statusCode);
-                res.send(error);
-            } catch (_error) {
-                res.status(500);
-                res.send({
-                    message: error.message,
-                    statusCode: 500,
-                    details: {
-                        code: 'internal_server_error',
-                    },
-                });
-            }
-        });
+    this.app.use((error, _req, res, _next) => {
+        try {
+            res.status(error.statusCode);
+            res.send(error);
+        } catch (_error) {
+            res.status(500);
+            res.send({
+                message: error.message,
+                statusCode: 500,
+                details: {
+                    code: 'internal_server_error',
+                },
+            });
+        }
+    });
 
-        this.instance = await this.app.listen(port);
-        console.info(`Server started at port ${port}`);
-    }
+    this.instance = await this.app.listen(port);
+    console.info(`Server started at port ${port}`);
+}
 
     exit() {
         if (this.instance) {
