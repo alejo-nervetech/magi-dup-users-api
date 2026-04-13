@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  magi-users-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: magi-users-api
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - magi-net
+
+networks:
+  magi-net:
+    external: true
+    name: magi-net
