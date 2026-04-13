@@ -56,14 +56,14 @@ class Server {
 
     async start() {
         const port = this.config.port;
-
+    this.app.get('/healthcheck', (_req, res) => {
+            res.send('ok');
         this.setupMiddleware();
         this.setupEndpoints();
 
         dbClient.authenticate();
 
-        this.app.get('/healthcheck', (_req, res) => {
-            res.send('ok');
+    
         });
 
         this.app.use((error, _req, res, _next) => {
