@@ -10,6 +10,8 @@ RUN npm ci
 COPY . .
 
 RUN npm run build
+# Create uploads directory
+RUN mkdir -p uploads
 
 # Add this ↓
 COPY docker-entrypoint.sh ./
