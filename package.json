@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Nerve-Tech-PH/magi-users-api.git"
+        "url": "git+https://github.com/alejo-nervetech/magi-dup-users-api.git"
     },
     "keywords": [
         "magi",
