@@ -12,9 +12,21 @@ const path = require('path');
 const UploadUserController = require('../controllers/users/upload-user.controller');
 const GetUsersByIdsController = require('../controllers/users/get-users-by-ids.controller');
 
+//Local
+//const storage = multer.diskStorage({
+//    destination: (_req, _file, cb) => {
+//        cb(null, 'uploads/');
+//    },
+//    filename: (_req, file, cb) => {
+//        cb(null, Date.now() + path.extname(file.originalname));
+//    },
+//});
+
+const os = require('os');
+
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, os.tmpdir());  // uses /tmp — always exists in any container
     },
     filename: (_req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
