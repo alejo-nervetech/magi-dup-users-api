@@ -55,37 +55,44 @@ class Server {
     }
 
     async start() {
-    const port = this.config.port;
+        const port = this.config.port;
 
-    this.setupMiddleware();
+        this.setupMiddleware();
 
-    this.app.get('/healthcheck', (_req, res) => {
-        res.send('ok');
-    });
+        // /health   — used by: ALB target group health check, ECS container
+        //             healthCheck, and Docker HEALTHCHECK directive.
+        // /healthcheck — kept for backwards compatibility.
+        this.app.get('/health', (_req, res) => {
+            res.status(200).json({ status: 'ok' });
+        });
 
-    this.setupEndpoints();
+        this.app.get('/healthcheck', (_req, res) => {
+            res.status(200).json({ status: 'ok' });
+        });
 
-    dbClient.authenticate();
+        this.setupEndpoints();
 
-    this.app.use((error, _req, res, _next) => {
-        try {
-            res.status(error.statusCode);
-            res.send(error);
-        } catch (_error) {
-            res.status(500);
-            res.send({
-                message: error.message,
-                statusCode: 500,
-                details: {
-                    code: 'internal_server_error',
-                },
-            });
-        }
-    });
+        dbClient.authenticate();
 
-    this.instance = await this.app.listen(port);
-    console.info(`Server started at port ${port}`);
-}
+        this.app.use((error, _req, res, _next) => {
+            try {
+                res.status(error.statusCode);
+                res.send(error);
+            } catch (_error) {
+                res.status(500);
+                res.send({
+                    message: error.message,
+                    statusCode: 500,
+                    details: {
+                        code: 'internal_server_error',
+                    },
+                });
+            }
+        });
+
+        this.instance = await this.app.listen(port);
+        console.info(`Server started at port ${port}`);
+    }
 
     exit() {
         if (this.instance) {
