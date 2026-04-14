@@ -7,10 +7,20 @@ services:
       dockerfile: Dockerfile
     container_name: magi-users-api
     ports:
-      - "3000:3000"
+      - "3001:3000"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      # Auth
+      - JWT_TOKEN=${JWT_TOKEN}
+      - SERVICE_SECRET=${SERVICE_SECRET}
+      # CORS — must match the ALB DNS name or custom domain, not localhost
+      - CORS_ORIGIN=${CORS_ORIGIN}
     networks:
       - magi-net
 
